@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Add</h2>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+
+  <div id="block" class="block">
+
+  <form action="{{ url_for('add')}}" method=post>
+    <dl>
+      <dt>ID :
+      <dd><input type=text name='user_id' class="form-control">
+      <dt>Nick :
+      <dd><input type=text name='nickname' class="form-control">
+      <dt>Password :
+      <dd><input type=password name='password' class="form-control">
+      <dd><input type="submit" class="btn btn-primary" value="Add">
+    </dl>
+  </form>
+</div>
+{% endblock %}
