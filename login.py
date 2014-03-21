@@ -89,13 +89,13 @@ class UserController:
             return redirect(url_for('login'))
 
         if not registered_user.check_password(password):
-            flash('Password is invalid','error')
+            flash('Password is invalid : '+password,'error')
             return redirect(url_for('login'))
 
         login_user(registered_user, remember = remember_me)
         flash('Logged in successfully')
 
-        return redirect(request.args.get('next') or url_for('index'))
+        return redirect(request.args.get('next') or url_for('show_entries'))
 
 
 
@@ -120,12 +120,15 @@ class UserController:
         return redirect(url_for('show_entries'))
 
     @app.route('/user/update')
+    @login_required
     def update():
+        print 'update !!'
         user = db_session.query(User).filter(User.user_id==request.args.get('user_id')).first()
         db_session.close()
         return render_template('user/update.html', user_id = user.user_id , nickname=user.nickname )
 
     @app.route('/user/update', methods=['POST'])
+    @login_required
     def update_entry():
         u = db_session.query(User).filter(User.user_id==request.form['user_id']).first()
 
@@ -151,6 +154,7 @@ class UserController:
 @login_manager.user_loader
 def load_user(user_id):
     #return User.query.get(int(user_id))
+    print 'load_user Call!!'
     return db_session.query(User).get(user_id)
 
 
