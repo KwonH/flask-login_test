@@ -5,7 +5,7 @@ init_db()
 from database import db_session
 from models import User
  
-from flask import Flask, render_template, url_for, request, redirect, flash, session, escape #, g, url_for, about, 
+from flask import Flask, render_template, url_for, request, redirect, flash, session, escape, g#, url_for, about, 
 from sqlalchemy import desc
 
 from flask.ext.login import (LoginManager, UserMixin, AnonymousUserMixin,
@@ -26,14 +26,21 @@ from flask.ext.login import (LoginManager, UserMixin, AnonymousUserMixin,
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY']    = 'secret_garden'
+#db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(userid):
     return User.get(userid)
 
+@app.before_request
+def before_request():
+    print 'current_user : %s' % current_user 
+    g.User = current_user
 
 class UserController:
     @app.route('/')
@@ -97,13 +104,14 @@ class UserController:
 
         return redirect(request.args.get('next') or url_for('show_entries'))
 
-
-
     @app.route('/user/logout')
     def logout():
         print 'Log Out'
+        '''
         session.pop('user_id', None)
         session.pop('logged_in', None)
+        '''
+        logout_user()
         return redirect(url_for('show_entries'))
 
     @app.route('/user/add')
@@ -130,13 +138,16 @@ class UserController:
     @app.route('/user/update', methods=['POST'])
     @login_required
     def update_entry():
-        u = db_session.query(User).filter(User.user_id==request.form['user_id']).first()
+        if request.form['user_id'] == g.User.user_id:
+            u = db_session.query(User).filter(User.user_id==request.form['user_id']).first()
+        
+            u.nickname = request.form['nickname']
+            u.password = request.form['password']
 
-        u.nickname = request.form['nickname']
-        u.password = request.form['password']
+            db_session.commit()
+            db_session.close()
 
-        db_session.commit()
-        db_session.close()
+        flash('You are not authorized to edit this todo item','error')
 
         return redirect(url_for('show_entries'))
 
