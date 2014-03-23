@@ -2,12 +2,12 @@
 {% block body %}
   <h2>Update</h2>
   {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-  <form action="{{ url_for('update')}}" method=post >
+  <form action="{{ url_for('update', user_id=user.user_id, nickname=user.nickname)}}" method=post >
     <dl>
       <dt>User ID :
-      <dd><input type=text name='user_id' value='{{ user_id }}' readonly>
+      <dd><input type=text name='user_id' value='{{ user.user_id }}' readonly>
       <dt>Username :
-      <dd><input type=text name='nickname' value='{{ nickname }}'>
+      <dd><input type=text name='nickname' value='{{ user.nickname }}'>
       <dt>Password :
       <dd><input type=password name='password' >
       <dd><input type=submit value=Update >
