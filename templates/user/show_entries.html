@@ -1,11 +1,23 @@
 {% extends "layout.html" %}
 {% block body %}
+  <script type="text/javascript">
+  	function delete_action(vUser_id){
+  		oFrom = document.getElementById("delete_form");
+  		oFrom.method = "post";
+  		oFrom.user_id.value = vUser_id;
+  		oFrom.action = "{{url_for('delete')}}";
+  		oFrom.submit();
+  	}
+  </script>
   
   <ul class=entries>
   {% for entry in entries %}
-    <li><h2>{{ entry.user_id }}</h2>{{ entry.nickname }} 
-    <a href="{{ url_for('delete', user_id=entry.user_id) }}">삭제</a>
-    <a href="{{ url_for('update', user_id=entry.user_id) }}">수정</a></li>
+  <form name="delete_form" id="delete_form" >
+  	<input type="hidden" name="user_id" id="user_id" >
+    	<li><h2>{{ entry.user_id }}</h2>{{ entry.nickname }} 
+    	<a href="javascript:delete_action('{{entry.user_id}}')">Delete</a>
+    	<a href="{{ url_for('update', user_id=entry.user_id) }}">Update</a></li>
+    </form>
   {% else %}
     <li><em>Unbelievable. No entries here so far</em></li>
   {% endfor %}

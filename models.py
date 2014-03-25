@@ -10,10 +10,9 @@ class User(Base):
     created     =   Column(DateTime)
     modified    =   Column(DateTime)
 
-    def __init__(self, user_id=None, nickname=None, password=None):
+    def __init__(self, user_id=None, nickname=None):
         self.user_id    = user_id
         self.nickname   = nickname
-        self.password   = password
  
     def __repr__(self):
         return '<User %r>' % (self.nickname)
